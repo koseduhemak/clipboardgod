@@ -1,0 +1,38 @@
+{
+  "name": "clipboardgod",
+  "version": "0.0.1",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ClubeDosGeeksCoding/basel-app.git"
+  },
+  "author": "Jayr Alencar <jayralencarpereira@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ClubeDosGeeksCoding/basel-app/issues"
+  },
+  "homepage": "https://github.com/ClubeDosGeeksCoding/basel-app#readme",
+  "scripts": {
+    "start": "electron main.js",
+    "win32": "electron-packager . myApp --platform=win32 --arch=ia32",
+    "win64": "electron-packager . myApp --platform=win32 --arch=x64",
+    "linux32": "electron-packager . myApp --platform=linux --arch=ia32",
+    "linux64": "electron-packager . myApp --platform=linux --arch=x64",
+    "osx": "electron-packager . myApp --platform=darwin --arch=x64",
+    "build": "electron-packager . --all"
+  },
+  "devDependencies": {
+    "angular": "^1.5.1",
+    "angular-route": "^1.5.1",
+    "angular-utils-pagination": "^0.11.0",
+    "basel-cli": "*",
+    "electron": "^1.4.8"
+  },
+  "titel": "clipboardgod",
+  "database": "database",
+  "title": "clipboardgod",
+  "type": "simple",
+  "dependencies": {
+    "electron-clipboard-watcher": "^1.0.1"
+  }
+}

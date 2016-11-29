@@ -1,0 +1,48 @@
+html {
+    box-sizing: border-box;
+}
+body {
+    background-color: rgba(0,0,0,0.5);
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+.clipboard-item {
+    border: 1px solid;
+    padding: 10px;
+    overflow: hidden;
+    width: 200px;
+    height: 200px;
+    margin: 20px;
+    background: #fff;
+    display: inline-block;
+    white-space: normal;
+}
+
+.clipboard-info {
+    position: absolute;
+    bottom: 0;
+    background: white;
+    width: 100%;
+    text-align: right;
+    padding-right: 15px;
+}
+
+.clipboard-item.active {
+    border: 10px solid #2aabd2;
+    padding:1px;
+}
+
+.clipboard-content-container {
+    position: absolute;
+    overflow: hidden;
+    white-space: nowrap;
+    height: 250px;
+    transition: all 1s;
+    transform: translateX(0);
+}
+
+.search-panel {
+    padding: 10px 40px 0px 10px;
+}
