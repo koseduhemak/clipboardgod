@@ -6,10 +6,11 @@ const globalShortcut = electron.globalShortcut;
 const BrowserWindow = require('electron').BrowserWindow;
 const screen = require('electron').screen;
 const clipboard = require('electron').clipboard;
-const ipcMain = require('electron').ipcMain;
+const nativeImage = electron.nativeImage;
 const clipboardWatcher = require('electron-clipboard-watcher');
 const basel = require('basel-cli');
-var fs = require("fs");
+const fs = require("fs");
+const md5 = require("md5");
 
 //var robot = require("robotjs");
 
@@ -24,24 +25,44 @@ clipboardService.prototype.init = function () {
        watchDelay: 1000,
 
         onImageChange: function(nativeImage) {
-            var ts = new Date().getTime();
-            var path = "images/clip-"+ts+".png";
+            let ts = new Date().getTime();
+            let path = "images/clip-"+ts+".png";
+            let pngImage = nativeImage.toPNG();
+            let imageMD5 = md5(pngImage);
 
-            fs.writeFile(path, nativeImage.toPNG(), function(error) {
-                if (error) {
-                    console.error("write error:  " + error.message);
-                } else {
-                    basel.database.insert('clipboard', {image: path, datetime: new Date()})
-                }
-            });
+            let rows = basel.database.run("SELECT * FROM clipboard WHERE imageMD5 = ?", [imageMD5]);
+
+            // check if a row containing the same image already exists
+            if (rows.length == 0) {
+
+                fs.writeFile(path, pngImage, function (error) {
+                    if (error) {
+                        console.error("write error:  " + error.message);
+                    } else {
+                        basel.database.insert('clipboard', {image: path, datetime: new Date(), imageMD5: imageMD5})
+                    }
+                });
+            } else {
+                basel.database.update('clipboard', {datetime: new Date()}, {id: rows[0].id});
+            }
         },
 
 
         onTextChange: function(text) {
 
-            var clipboardContent = getClipboardTextContent();
+            let clipboardContent = getClipboardTextContent();
             if (clipboardContent) {
-                basel.database.insert('clipboard', {content: clipboardContent, plaintext: text, datetime: new Date()})
+                let rows = basel.database.run("SELECT * FROM clipboard WHERE plaintext = ?", [text]);
+
+                if (rows.length == 0) {
+                    basel.database.insert('clipboard', {
+                        content: clipboardContent,
+                        plaintext: text,
+                        datetime: new Date()
+                    })
+                } else {
+                    basel.database.update('clipboard', {datetime: new Date()}, {id: rows[0].id});
+                }
             }
         }
     });
@@ -55,6 +76,20 @@ clipboardService.prototype.init = function () {
         console.log("Could not register keyboard listener.");
     }
 };
+
+clipboardService.prototype.writeToClipboard = function(contentElement) {
+    console.log(contentElement);
+    let imgSrc = contentElement.children("img").attr("src");
+    if (imgSrc != undefined) {
+        fs.access(imgSrc, fs.constants.R_OK, (err) => {
+            console.log(err);
+        });
+        clipboard.writeImage(nativeImage.createFromPath(imgSrc));
+    } else {
+        clipboard.writeText(contentElement.text());
+    }
+    //clipboard.writeText(content);
+}
 
 module.exports = new clipboardService();
 

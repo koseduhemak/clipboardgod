@@ -1,4 +1,5 @@
 "use strict";
+let keyEvents = require("./services/gui/keyEvents");
 app.controller("clipboardController", function($scope, $location){
 
 	$scope.table_name = "clipboard";
@@ -6,7 +7,7 @@ app.controller("clipboardController", function($scope, $location){
 
 	//List
 	$scope.list = function(){
-		basel.database.runAsync("SELECT * FROM "+$scope.table_name+" ORDER BY id DESC", function(data){
+		basel.database.runAsync("SELECT * FROM "+$scope.table_name+" ORDER BY datetime DESC", function(data){
 			$scope.items = data;
 		});
 	}
@@ -47,6 +48,21 @@ app.controller("clipboardController", function($scope, $location){
 		}
 	}
 });
+
+app.directive('keypressEvents', [
+    '$document',
+    '$rootScope',
+    function($document, $rootScope) {
+        return {
+            restrict: 'A',
+            link: function() {
+                $document.bind('keydown', function(e) {
+                    keyEvents.doKeyProcessing(e);
+                });
+            }
+        };
+    }
+]);
 
 
 app.filter("trust", ['$sce', function($sce) {

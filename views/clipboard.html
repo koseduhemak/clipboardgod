@@ -1,67 +1,6 @@
-<script>
-    $(document).ready(function() {
-
-
-    });
-
-    $(document).keydown(function(e) {
-        switch(e.which) {
-            case 37: getPrevItem();// left
-                break;
-
-            case 39: getNextItem();// right
-                break;
-
-            default: return; // exit this handler for other keys
-        }
-        e.preventDefault(); // prevent the default action (scroll / move caret)
-    });
-
-
-    var currentLeft = 0;
-    function getPrevItem() {
-        var activeItem = getActiveItem();
-        var prevItem = activeItem.prev();
-
-        if (prevItem.length > 0) {
-            activeItem.removeClass("active");
-            prevItem.addClass("active");
-
-            if (currentLeft < 0) {
-                currentLeft += prevItem.outerWidth(true);
-                $('.clipboard-content-container').css("transform", "translateX("+currentLeft+"px)");
-            }
-        }
-    }
-
-    function getNextItem() {
-        var activeItem = getActiveItem();
-        var nextItem = activeItem.next();
-        var screenWidth = $(window).width();
-        var breakPoint = (($('.clipboard-item').length * activeItem.outerWidth(true)) - screenWidth) * (-1);
-
-
-        if (nextItem.length > 0) {
-            activeItem.removeClass("active");
-            nextItem.addClass("active");
-
-            console.log((($('.clipboard-item').length * activeItem.outerWidth(true)) - screenWidth) * (-1), currentLeft);
-            if (breakPoint  < currentLeft) {
-                currentLeft -= nextItem.outerWidth(true);
-                $('.clipboard-content-container').css("transform", "translateX("+currentLeft+"px)");
-            }
-        }
-    }
-
-    function getTransformX(el) {
-        return parseInt(el.css("transform").split(',')[4]);
-    }
-
-    function getActiveItem() {
-        return $('.clipboard-item.active');
-    }
-</script>
-<div ng-controller="clipboardController">
+<div ng-controller="clipboardController" keypress-events="true">
+    <h1>View keys pressed</h1>
+    {{keyCode}}
     <div class="row">
         <div class="col-md-offset-8 col-md-4 search-panel">
             <input class="form-control" placeholder="Search" ng-model="search">
@@ -72,6 +11,7 @@
             <div class="clipboard-content-container" ng-init="list()">
                 <div class="clipboard-item" ng-class='{active:$first}' dir-paginate="item in items | filter: search | itemsPerPage: 20">
                     <div class="clipboard-content">
+                        <img ng-src="{{item.image}}" ng-show="item.image">
                         {{item.plaintext}}
                     </div>
                     <div class="clipboard-info">{{ item.datetime | dateToISO | date:'dd.MM.yyyy'}}</div>

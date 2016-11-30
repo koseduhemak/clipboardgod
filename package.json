@@ -33,6 +33,7 @@
   "title": "clipboardgod",
   "type": "simple",
   "dependencies": {
-    "electron-clipboard-watcher": "^1.0.1"
+    "electron-clipboard-watcher": "^1.0.1",
+    "md5": "^2.2.1"
   }
 }
